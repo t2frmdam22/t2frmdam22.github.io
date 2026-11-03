@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#B5312B">
+<meta name="apple-mobile-web-app-title" content="Johnstons">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Johnston Family Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Fraunces:ital,opsz,wght@0,9..144,400..650;1,9..144,400..600&family=Karla:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --bg:#F7F1E8; --surface:#FFFDF9; --ink:#2B2522; --sub:#76695E; --line:#EADFD1;
+    --accent:#B5312B; --accent-ink:#FFFFFF; --focus:#B5312B;
+    --serif:"Fraunces", Georgia, "Times New Roman", serif;
+    --sans:"Karla", "Helvetica Neue", Arial, sans-serif;
+    --hand:"Caveat Brush", "Comic Sans MS", "Marker Felt", cursive;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1E1A18; --surface:#28231F; --ink:#F1EAE2; --sub:#B3A79B; --line:#3A332D;
+      --accent:#F08C82; --accent-ink:#1E1A18; --focus:#F08C82; color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1E1A18; --surface:#28231F; --ink:#F1EAE2; --sub:#B3A79B; --line:#3A332D;
+    --accent:#F08C82; --accent-ink:#1E1A18; --focus:#F08C82; color-scheme:dark;
+  }
+  :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  *,*::before,*::after{box-sizing:inherit}
+  html{scroll-padding-top:env(safe-area-inset-top,0px)}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
+  :focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:6px}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:clamp(18px,4vw,40px) clamp(16px,4vw,32px) 64px}
+  .top{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:20px;align-items:stretch}
+  @media (max-width:760px){.top{grid-template-columns:1fr}}
+
+  /* The month card: changes colour, pattern and lettering every month */
+  .month{position:relative;border-radius:22px;padding:clamp(18px,3vw,28px);background:var(--m-bg);min-height:300px;display:flex;flex-direction:column;justify-content:space-between;gap:18px;overflow:hidden;isolation:isolate}
+  .month::before{content:"";position:absolute;inset:12px;border:2px dashed var(--m-line);border-radius:14px;z-index:-1}
+  .month.p-stripes{background:repeating-linear-gradient(90deg,var(--m-bg) 0 22px,var(--m-alt) 22px 44px)}
+  .month.p-thin{background:repeating-linear-gradient(90deg,var(--m-bg) 0 14px,var(--m-alt) 14px 17px)}
+  .month.p-dots{background-color:var(--m-bg);background-image:radial-gradient(var(--m-alt) 2.6px,transparent 3px);background-size:26px 26px}
+  .month.p-gingham{background-color:var(--m-bg);background-image:linear-gradient(90deg,var(--m-alt) 50%,transparent 50%),linear-gradient(var(--m-alt) 50%,transparent 50%);background-size:44px 44px;background-blend-mode:multiply}
+  .month-word{font-family:var(--hand);font-weight:400;color:var(--m-ink);font-size:clamp(64px,13vw,124px);line-height:.9;margin:6px 0 0 4px;letter-spacing:.01em;transform:rotate(-2.5deg);transform-origin:left bottom;text-shadow:3px 3px 0 var(--m-shadow)}
+  .paper{background:var(--surface);color:var(--ink);border-radius:16px;padding:16px 18px;max-width:520px;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+  .greet{font-family:var(--serif);font-weight:500;font-size:clamp(24px,3.6vw,32px);line-height:1.15;margin:0}
+  .date{color:var(--sub);margin:4px 0 0}
+  .verse{margin:12px 0 0;padding-top:12px;border-top:1px dashed var(--line);font-family:var(--serif);font-style:italic;font-size:16.5px;line-height:1.5}
+  .verse cite{display:block;font-style:normal;font-family:var(--sans);font-size:13px;color:var(--sub);margin-top:2px}
+
+  /* Today */
+  .today{background:var(--surface);border-radius:22px;padding:clamp(18px,3vw,26px);display:flex;flex-direction:column;gap:12px;border:1px solid var(--line)}
+  .today h2{font-family:var(--serif);font-weight:500;font-size:26px;margin:0;line-height:1.1}
+  .meals{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+  .meals li{display:grid;grid-template-columns:86px minmax(0,1fr);gap:10px;padding:9px 0;border-bottom:1px solid var(--line);align-items:baseline}
+  .meals li:last-child{border-bottom:0}
+  .meal-name{font-size:13px;color:var(--sub);font-weight:500}
+  .meal-what{font-family:var(--serif);font-size:18px;line-height:1.3}
+  .meal-what .none{font-family:var(--sans);font-size:14px;color:var(--sub);font-style:italic}
+  .meal-what small{font-family:var(--sans);font-size:12px;color:var(--sub);display:block}
+  .daynote{background:#FFF3D6;color:#4D3C14;border-radius:12px;padding:10px 12px;font-size:14px}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .daynote{background:#3A311C;color:#F1DDA8}}
+  :root[data-theme="dark"] .daynote{background:#3A311C;color:#F1DDA8}
+  .today .more{margin-top:auto;font-size:14px;font-weight:500;color:var(--accent);text-decoration:none}
+  .today .more:hover{text-decoration:underline}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border-radius:999px;font-weight:500;background:var(--accent);color:var(--accent-ink)}
+  .btn:hover{filter:brightness(1.06)}
+  .msg{color:var(--sub);font-size:15px;margin:0}
+
+  /* App tiles */
+  .apps-head{display:flex;justify-content:space-between;align-items:baseline;margin:34px 0 14px}
+  .apps-head h2{font-family:var(--serif);font-weight:500;font-size:26px;margin:0}
+  .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;list-style:none;margin:0;padding:0}
+  @media (max-width:760px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
+  .tile{position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:22px;min-height:168px;padding:18px;border-radius:20px;background:var(--t);color:var(--t-ink,#2B2522);text-decoration:none;transition:transform .15s ease}
+  a.tile:hover{transform:translateY(-2px)}
+  a.tile:active{transform:translateY(0)}
+  .tile .ic{width:54px;height:54px;border-radius:16px;background:rgba(255,255,255,.72);display:grid;place-items:center;font-size:28px}
+  .tile h3{font-family:var(--serif);font-weight:550;font-size:clamp(19px,2.4vw,23px);line-height:1.15;margin:0}
+  .tile p{margin:3px 0 0;font-size:13.5px;line-height:1.4;opacity:.85}
+  .tile .soon{position:absolute;top:16px;right:16px;font-size:12px;font-weight:700;background:rgba(255,255,255,.7);border-radius:999px;padding:3px 10px}
+  .tile.is-soon{opacity:.62}
+  @media (max-width:420px){.tile{min-height:150px;padding:14px}.tile .ic{width:46px;height:46px;font-size:24px}.tile p{display:none}}
+
+  .foot{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between;font-size:13px;color:var(--sub)}
+  .foot button{text-decoration:underline;text-underline-offset:3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <section class="month" id="month" aria-labelledby="greet">
+      <div class="month-word" id="month-word" aria-hidden="true"></div>
+      <div class="paper">
+        <h1 class="greet" id="greet">Good morning</h1>
+        <p class="date" id="date"></p>
+        <blockquote class="verse" id="verse"></blockquote>
+      </div>
+    </section>
+    <section class="today" aria-labelledby="today-title">
+      <h2 id="today-title">Today’s meals</h2>
+      <div id="today-body"><p class="msg">Loading…</p></div>
+      <a class="more" href="./mealplanner/">Open the meal planner</a>
+    </section>
+  </div>
+
+  <div class="apps-head"><h2>Family apps</h2></div>
+  <ul class="tiles">
+    <li><a class="tile" href="./mealplanner/" style="--t:#FED57D">
+      <span class="ic" aria-hidden="true">🍽️</span>
+      <div><h3>Meal Planner</h3><p>Weekly plan, recipes, shopping list and freezer</p></div></a></li>
+    <li><a class="tile" href="https://calendar.google.com/" target="_blank" rel="noopener" style="--t:#98C1E9">
+      <span class="ic" aria-hidden="true">📅</span>
+      <div><h3>Calendar</h3><p>Opens your Google Calendar</p></div></a></li>
+    <li><div class="tile is-soon" aria-disabled="true" style="--t:#B3DFEB">
+      <span class="soon">Coming soon</span><span class="ic" aria-hidden="true">🎒</span>
+      <div><h3>Kids &amp; school</h3><p>School info, links and key dates</p></div></div></li>
+    <li><div class="tile is-soon" aria-disabled="true" style="--t:#C9D49A">
+      <span class="soon">Coming soon</span><span class="ic" aria-hidden="true">🌸</span>
+      <div><h3>Cutting garden</h3><p>What’s planted, sowing dates and blooms</p></div></div></li>
+    <li><div class="tile is-soon" aria-disabled="true" style="--t:#F6BE80">
+      <span class="soon">Coming soon</span><span class="ic" aria-hidden="true">✅</span>
+      <div><h3>To-do</h3><p>Shared family jobs and lists</p></div></div></li>
+    <li><div class="tile is-soon" aria-disabled="true" style="--t:#DCD7F5">
+      <span class="soon">Coming soon</span><span class="ic" aria-hidden="true">💰</span>
+      <div><h3>Budget</h3><p>Monthly categories and spending</p></div></div></li>
+  </ul>
+
+  <footer class="foot">
+    <span id="who"></span>
+    <span id="acct"></span>
+  </footer>
+</div>
+
+<script src="firebase-config.js"></script>
+<script>
+/* ---------- Month card ---------- */
+// One look per month, in the spirit of hand-lettered month cards. Australian seasons.
+const MONTHS = [
+  {p:'frame',   bg:'#E7F5F9', alt:'#E7F5F9', ink:'#4F86C0', line:'#98C1E9', sh:'#FFFFFF'}, // Jan
+  {p:'frame',   bg:'#F26B5E', alt:'#F26B5E', ink:'#FFE3E3', line:'#FDD0D0', sh:'#C9463B'}, // Feb
+  {p:'frame',   bg:'#DCE8C8', alt:'#DCE8C8', ink:'#5F7A45', line:'#9CA362', sh:'#F4F8EC'}, // Mar
+  {p:'frame',   bg:'#FCE1E4', alt:'#FCE1E4', ink:'#DE6585', line:'#F5A9BA', sh:'#FFFFFF'}, // Apr
+  {p:'frame',   bg:'#EAF4FB', alt:'#EAF4FB', ink:'#6E9F3E', line:'#98C1E9', sh:'#FFFFFF'}, // May
+  {p:'frame',   bg:'#F0A351', alt:'#F0A351', ink:'#FFFDF5', line:'#FFF1CC', sh:'#C97A2C'}, // Jun
+  {p:'thin',    bg:'#FFFFFF', alt:'#B9D2EE', ink:'#3C5A80', line:'#98C1E9', sh:'#FFFFFF'}, // Jul
+  {p:'frame',   bg:'#EE6F57', alt:'#EE6F57', ink:'#FFF6EC', line:'#FFD6C9', sh:'#C24E39'}, // Aug
+  {p:'frame',   bg:'#FBEEDC', alt:'#FBEEDC', ink:'#E2713A', line:'#F0A351', sh:'#FFFFFF'}, // Sep
+  {p:'stripes', bg:'#F6A04D', alt:'#F28C3C', ink:'#FFF6E6', line:'#FFE2B8', sh:'#C46A1F'}, // Oct
+  {p:'gingham', bg:'#FFF7F5', alt:'#EBC4C4', ink:'#9E3B34', line:'#FFFFFF', sh:'#FFF7F5'}, // Nov
+  {p:'dots',    bg:'#FBF5EC', alt:'#C86B5C', ink:'#5E8C45', line:'#D9C9B4', sh:'#FFFFFF'}, // Dec
+];
+// King James Version (public domain)
+const VERSES = [
+  ['This is the day which the LORD hath made; we will rejoice and be glad in it.','Psalm 118:24'],
+  ['Trust in the LORD with all thine heart; and lean not unto thine own understanding.','Proverbs 3:5'],
+  ['Thy word is a lamp unto my feet, and a light unto my path.','Psalm 119:105'],
+  ['But as for me and my house, we will serve the LORD.','Joshua 24:15'],
+  ['Casting all your care upon him; for he careth for you.','1 Peter 5:7'],
+  ['Except the LORD build the house, they labour in vain that build it.','Psalm 127:1'],
+  ['Let all your things be done with charity.','1 Corinthians 16:14'],
+  ['The LORD is my shepherd; I shall not want.','Psalm 23:1'],
+  ['Train up a child in the way he should go: and when he is old, he will not depart from it.','Proverbs 22:6'],
+  ['In every thing give thanks: for this is the will of God in Christ Jesus concerning you.','1 Thessalonians 5:18'],
+  ['And whatsoever ye do, do it heartily, as to the Lord, and not unto men.','Colossians 3:23'],
+  ['The joy of the LORD is your strength.','Nehemiah 8:10'],
+  ['Be still, and know that I am God.','Psalm 46:10'],
+  ['I can do all things through Christ which strengtheneth me.','Philippians 4:13'],
+];
+let firstName = '';
+function esc(s){ return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function isoDate(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function paintHeader(){
+  const now = new Date(), m = MONTHS[now.getMonth()], card = document.getElementById('month');
+  card.className = 'month' + (m.p==='frame' ? '' : ' p-'+m.p);
+  card.style.cssText = `--m-bg:${m.bg};--m-alt:${m.alt};--m-ink:${m.ink};--m-line:${m.line};--m-shadow:${m.sh}`;
+  document.getElementById('month-word').textContent = now.toLocaleDateString('en-AU',{month:'long'});
+  const h = now.getHours(), part = h<12 ? 'Good morning' : h<17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('greet').textContent = firstName ? `${part}, ${firstName}` : `${part}, Johnstons`;
+  document.getElementById('date').textContent = now.toLocaleDateString('en-AU',{weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  const day = Math.floor((now - new Date(now.getFullYear(),0,0))/86400000), v = VERSES[day % VERSES.length];
+  document.getElementById('verse').innerHTML = `${esc(v[0])}<cite>${esc(v[1])} (KJV)</cite>`;
+}
+paintHeader();
+
+/* ---------- Today's meals (drawn by the Firebase module below) ---------- */
+const MEALS = ['Breakfast','Lunch','Dinner','Dessert','Snacks'];
+const TYPE_LABEL = {leftovers:'Leftovers', freezer:'From the freezer', out:'Eating out', pantry:'Use what we have', tbd:'To be decided', custom:''};
+function showToday(state){
+  const box = document.getElementById('today-body');
+  if(state.status==='loading'){ box.innerHTML = `<p class="msg">Loading…</p>`; return; }
+  if(state.status==='signedOut'){ box.innerHTML = `<p class="msg" style="margin-bottom:12px">Sign in with your family Google account to see what’s on today.</p>${state.error?`<p class="msg" style="color:var(--accent);margin-bottom:12px">${esc(state.error)}</p>`:''}<button class="btn" onclick="DASH.signIn()">Sign in with Google</button>`; return; }
+  if(state.status==='denied'){ box.innerHTML = `<p class="msg">${esc(state.email)} doesn’t have access to the family planner. Sign out below and use a different account.</p>`; return; }
+  if(state.status==='error'){ box.innerHTML = `<p class="msg">Couldn’t load today’s meals. Check the internet connection, then reload.</p>`; return; }
+  const {entries, titles, note} = state;
+  const rows = MEALS.map(m=>{
+    const list = entries.filter(e=>e.meal===m).sort((a,b)=>a.key.localeCompare(b.key));
+    if(!list.length && (m==='Dessert' || m==='Snacks')) return '';
+    const what = list.length ? list.map(e=>{
+      const name = e.name || titles[e.recipeId] || '';
+      const label = TYPE_LABEL[e.type];
+      if(!e.type) return `<div>${esc(name || 'Recipe')}</div>`;
+      if(e.type==='leftovers' || e.type==='freezer') return `<div>${esc(name)}<small>${label}</small></div>`;
+      return `<div>${esc(e.text || label)}${e.text && label ? `<small>${label}</small>` : ''}</div>`;
+    }).join('') : `<span class="none">Nothing planned</span>`;
+    return `<li><span class="meal-name">${m}</span><span class="meal-what">${what}</span></li>`;
+  }).join('');
+  box.innerHTML = `<ul class="meals">${rows}</ul>${note ? `<div class="daynote" style="margin-top:10px">📝 ${esc(note)}</div>` : ''}`;
+}
+function showAccount(email){
+  document.getElementById('who').textContent = email ? `Signed in as ${email}` : '';
+  document.getElementById('acct').innerHTML = email ? `<button onclick="DASH.signOut()">Sign out</button>` : '';
+}
+showToday({status:'loading'});
+// Coming back to the page later (or the next morning) refreshes the greeting and meals.
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible'){ paintHeader(); if(window.DASH) DASH.refresh(); } });
+</script>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signInWithRedirect, getRedirectResult, signOut }
+  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getFirestore, collection, query, where, getDocs, doc, getDoc }
+  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const cfg = window.FIREBASE_CONFIG || {};
+const HOUSEHOLD = window.HOUSEHOLD_ID || 'johnston';
+const app = initializeApp(cfg);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+provider.setCustomParameters({prompt:'select_account'});
+let user = null;
+
+async function loadToday(){
+  if(!user) return;
+  const today = new Date(), iso = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  try{
+    const snap = await getDocs(query(collection(db,'households',HOUSEHOLD,'plan'), where('date','==',iso)));
+    const all = snap.docs.map(d=>({...d.data(), key:d.id}));
+    const note = (all.find(e=>e.type==='note')||{}).text || '';
+    const entries = all.filter(e=>e.type!=='note');
+    const ids = [...new Set(entries.filter(e=>e.recipeId && !e.name).map(e=>e.recipeId))];
+    const titles = {};
+    await Promise.all(ids.map(async id=>{ const r = await getDoc(doc(db,'households',HOUSEHOLD,'recipes',id)); if(r.exists()) titles[id] = r.data().title; }));
+    showToday({status:'ready', entries, titles, note});
+  }catch(e){
+    showToday(e && e.code==='permission-denied' ? {status:'denied', email:user.email} : {status:'error'});
+  }
+}
+window.DASH = {
+  async signIn(){
+    try{ await signInWithPopup(auth, provider); }
+    catch(e){
+      if(e && (e.code==='auth/popup-blocked' || e.code==='auth/operation-not-supported-in-this-environment')) await signInWithRedirect(auth, provider);
+      else if(e && e.code==='auth/unauthorized-domain') showToday({status:'signedOut', error:"This web address isn't approved for sign-in yet. Add it in Firebase under Authentication → Settings → Authorised domains."});
+      else if(e && e.code!=='auth/popup-closed-by-user' && e.code!=='auth/cancelled-popup-request') showToday({status:'signedOut', error:`Sign-in didn't work (${e.code}). Please try again.`});
+    }
+  },
+  signOut(){ return signOut(auth); },
+  refresh(){ loadToday(); }
+};
+getRedirectResult(auth).catch(()=>{});
+onAuthStateChanged(auth, u=>{
+  user = u;
+  showAccount(u && u.email);
+  if(!u){ firstName = ''; paintHeader(); showToday({status:'signedOut'}); return; }
+  firstName = ((u.displayName||'').trim().split(/\s+/)[0]) || '';
+  paintHeader();
+  showToday({status:'loading'});
+  loadToday();
+});
+</script>
+</body>
+</html>
